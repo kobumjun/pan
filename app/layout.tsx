@@ -3,7 +3,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "익명 자랑 인증",
+  title: "PAN",
   description: "친구들한텐 못 자랑하는 것들을 올리는 익명 자랑 커뮤니티"
 };
 

@@ -16,7 +16,7 @@ export default function Header() {
     <header className="border-b border-boardBorder bg-white">
       <div className="max-w-4xl mx-auto flex items-center justify-between px-3 py-2">
         <Link href="/" className="text-lg font-semibold text-gray-900">
-          익명 자랑 인증
+          PAN
         </Link>
         <nav className="flex gap-2 text-sm">
           <Link
