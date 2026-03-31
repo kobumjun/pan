@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply bg-boardBg text-boardText;
+  font-family: theme("fontFamily.sans");
+}
+
+a {
+  @apply text-blue-700 hover:underline;
+}
+
+.board-container {
+  @apply max-w-4xl mx-auto bg-white border border-boardBorder;
+}
+
+.board-header {
+  @apply px-3 py-2 bg-boardHeader border-b border-boardBorder text-sm font-semibold flex items-center justify-between;
+}
+
+.board-row {
+  @apply px-3 py-2 border-b border-gray-200 text-sm;
+}
+
+.board-row:hover {
+  @apply bg-gray-50;
+}
+
+.board-title {
+  @apply font-medium text-gray-900;
+}
+
+.board-meta {
+  @apply text-xs text-gray-500 space-x-2;
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+  @apply border border-gray-300 px-2 py-1 text-sm w-full;
+}
+
+button {
+  @apply text-sm;
+}
+
+.btn-primary {
+  @apply px-3 py-1 bg-blue-600 text-white border border-blue-700 hover:bg-blue-700;
+}
+
+.btn-secondary {
+  @apply px-3 py-1 bg-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-200;
+}
+
+.btn-danger {
+  @apply px-3 py-1 bg-red-600 text-white border border-red-700 hover:bg-red-700;
+}
+
+.badge {
+  @apply inline-flex items-center px-2 py-0.5 text-xs border border-gray-300 bg-gray-50;
+}
