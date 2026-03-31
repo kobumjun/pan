@@ -34,10 +34,6 @@ export default async function EditCommentPage({
 
   const isDelete = searchParams.mode === "delete";
 
-  async function handleSubmit(formData: FormData) {
-    "use server";
-  }
-
   return (
     <div className="board-container">
       <div className="board-header">
@@ -55,12 +51,35 @@ export default async function EditCommentPage({
 }
 
 function CommentEditForm({ comment }: { comment: Comment }) {
-  async function onSubmit(formData: FormData) {
-    "use server";
-  }
-
   return (
-    <form action={onSubmit} className="space-y-3">
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const content = String(formData.get("content") ?? "");
+        const password = String(formData.get("password") ?? "");
+        if (!content.trim()) {
+          alert("댓글 내용을 입력해주세요.");
+          return;
+        }
+        if (!/^\d{4,8}$/.test(password)) {
+          alert("숫자 비밀번호 4~8자리를 입력해주세요.");
+          return;
+        }
+        const res = await fetch(`/api/comments/${comment.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content, password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.message ?? "댓글 수정에 실패했습니다.");
+          return;
+        }
+        window.location.href = `/post/${comment.post_id}`;
+      }}
+      className="space-y-3"
+    >
       <div>
         <label className="block text-xs text-gray-700 mb-1">댓글 내용</label>
         <textarea
@@ -91,12 +110,30 @@ function CommentEditForm({ comment }: { comment: Comment }) {
 }
 
 function CommentDeleteForm({ commentId, postId }: { commentId: string; postId: string }) {
-  async function onSubmit(formData: FormData) {
-    "use server";
-  }
-
   return (
-    <form action={onSubmit} className="space-y-3">
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const password = String(formData.get("password") ?? "");
+        if (!/^\d{4,8}$/.test(password)) {
+          alert("숫자 비밀번호 4~8자리를 입력해주세요.");
+          return;
+        }
+        const res = await fetch(`/api/comments/${commentId}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.message ?? "댓글 삭제에 실패했습니다.");
+          return;
+        }
+        window.location.href = `/post/${postId}`;
+      }}
+      className="space-y-3"
+    >
       <p>이 댓글을 삭제하시겠습니까? 비밀번호 확인 후 삭제됩니다.</p>
       <div>
         <label className="block text-xs text-gray-700 mb-1">

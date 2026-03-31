@@ -36,10 +36,6 @@ export default async function EditPostPage({
 
   const isDelete = searchParams.mode === "delete";
 
-  async function deletePost(password: string) {
-    "use server";
-  }
-
   return (
     <div className="board-container">
       <div className="board-header flex justify-between">
