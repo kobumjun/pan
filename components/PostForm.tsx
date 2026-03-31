@@ -66,31 +66,25 @@ export default function PostForm({
 
       if (images.length > 0) {
         const bucket = "post-images";
-        const { data: bucketCheck, error: bucketError } = await supabase.storage.getBucket(bucket);
-        if (bucketError || !bucketCheck) {
-          console.error("bucket not found", bucketError);
-          alert("이미지 저장소가 아직 준비되지 않아, 이미지 없이 글만 등록됩니다.");
-        } else {
-          for (let i = 0; i < images.length; i++) {
-            const file = images[i];
-            const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-            const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-            const { data, error } = await supabase.storage
-              .from(bucket)
-              .upload(path, file, {
-                cacheControl: "3600",
-                upsert: false
-              });
-            if (error) {
-              console.error(error);
-              alert("일부 이미지는 업로드되지 않았습니다.");
-              break;
-            }
-            const publicUrl = supabase.storage
-              .from(bucket)
-              .getPublicUrl(data.path).data.publicUrl;
-            imageUrls.push(publicUrl);
+        for (let i = 0; i < images.length; i++) {
+          const file = images[i];
+          const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+          const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+          const { data, error } = await supabase.storage
+            .from(bucket)
+            .upload(path, file, {
+              cacheControl: "3600",
+              upsert: false
+            });
+          if (error || !data) {
+            console.error("image upload error", error);
+            alert("일부 이미지는 업로드되지 않았습니다. (상세 오류는 콘솔을 확인하세요)");
+            continue;
           }
+          const publicUrl = supabase.storage
+            .from(bucket)
+            .getPublicUrl(data.path).data.publicUrl;
+          imageUrls.push(publicUrl);
         }
       }
 
