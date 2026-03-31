@@ -4,6 +4,7 @@ import { getSupabaseServerAnon } from "@/lib/supabaseServer";
 import { Post } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function fetchPosts(): Promise<Post[]> {
   const supabase = getSupabaseServerAnon();

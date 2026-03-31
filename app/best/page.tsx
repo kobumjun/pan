@@ -3,6 +3,9 @@ import PostList from "@/components/PostList";
 import { getSupabaseServerAnon } from "@/lib/supabaseServer";
 import { Post } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 async function fetchBestPosts(): Promise<Post[]> {
   const supabase = getSupabaseServerAnon();
   const { data, error } = await supabase
@@ -12,7 +15,11 @@ async function fetchBestPosts(): Promise<Post[]> {
     .order("created_at", { ascending: false })
     .limit(50);
 
-  if (error || !data) return [];
+  if (error) {
+    console.error("Failed to load best posts", error);
+    return [];
+  }
+  if (!data) return [];
   return data as unknown as Post[];
 }
 
