@@ -1,5 +1,5 @@
 import PostForm from "@/components/PostForm";
-import PasswordPrompt from "@/components/PasswordPrompt";
+import PostDeleteButton from "@/components/PostDeleteButton";
 import { getSupabaseServerAnon } from "@/lib/supabaseServer";
 import { Post } from "@/lib/types";
 
@@ -45,24 +45,7 @@ export default async function EditPostPage({
         {isDelete ? (
           <div className="space-y-3 text-sm">
             <p>이 글을 삭제하시겠습니까? 비밀번호 확인 후 삭제됩니다.</p>
-            <PasswordPrompt
-              buttonLabel="삭제하기"
-              buttonClassName="btn-danger"
-              onConfirm={async (password) => {
-                const res = await fetch(`/api/posts/${post.id}`, {
-                  method: "DELETE",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ password })
-                });
-                const data = await res.json();
-                if (!res.ok) {
-                  throw new Error(data.message ?? "삭제에 실패했습니다.");
-                }
-                if (typeof window !== "undefined") {
-                  window.location.href = "/";
-                }
-              }}
-            />
+            <PostDeleteButton postId={post.id} />
           </div>
         ) : (
           <PostForm
