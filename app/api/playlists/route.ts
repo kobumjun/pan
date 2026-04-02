@@ -6,6 +6,7 @@ import {
   getSpotifyAccessToken
 } from "@/lib/spotify";
 import { fetchYouTubePlaylistMeta } from "@/lib/youtube";
+import { hashPostPin, validatePostPin } from "@/lib/pin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -36,6 +37,15 @@ export async function POST(req: NextRequest) {
     const descriptionInput =
       typeof body.description === "string" ? body.description.trim() : "";
     const tags = normalizeTags(body.tags);
+    const post_pin_raw =
+      typeof body.post_pin === "string" ? body.post_pin.trim() : "";
+
+    if (!validatePostPin(post_pin_raw)) {
+      return NextResponse.json(
+        { message: "글 비밀번호는 숫자 4~6자리로 설정해주세요." },
+        { status: 400 }
+      );
+    }
 
     if (!user_name) {
       return NextResponse.json({ message: "닉네임을 입력해주세요." }, { status: 400 });
@@ -111,6 +121,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "제목이 필요합니다." }, { status: 400 });
     }
 
+    const password_hash = await hashPostPin(post_pin_raw);
     const supabase = getSupabaseServerService();
     const { data, error } = await supabase
       .from("playlists")
@@ -124,7 +135,8 @@ export async function POST(req: NextRequest) {
         cover_image_url,
         author_name,
         track_count,
-        tags
+        tags,
+        password_hash
       })
       .select("id")
       .single();

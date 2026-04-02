@@ -1,49 +1,38 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import PlaylistExplore from "@/components/PlaylistExplore";
 import { getSupabaseServerAnon } from "@/lib/supabaseServer";
-import type { PlaylistRow } from "@/lib/types";
+import {
+  fetchAnyPlaylistExists,
+  fetchPlaylistsListPage,
+  fetchTagOptions,
+  parseListPage,
+  playlistListPath
+} from "@/lib/playlistsList";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const SELECT_FIELDS =
-  "id, user_name, title, description, source_type, source_url, source_id, cover_image_url, author_name, track_count, tags, likes_count, comments_count, created_at";
-
-async function fetchPlaylists(): Promise<PlaylistRow[]> {
+export default async function HomePage({
+  searchParams
+}: {
+  searchParams: { page?: string; tag?: string };
+}) {
   const supabase = getSupabaseServerAnon();
-  const { data, error } = await supabase
-    .from("playlists")
-    .select(SELECT_FIELDS)
-    .order("created_at", { ascending: false })
-    .limit(100);
+  const hasAny = await fetchAnyPlaylistExists(supabase);
 
-  if (error) {
-    console.error("Failed to load playlists", error);
-    return [];
-  }
-  if (!data) return [];
-  return (data as unknown as PlaylistRow[]).map((row) => ({
-    ...row,
-    likes_count: row.likes_count ?? 0,
-    comments_count: row.comments_count ?? 0
-  }));
-}
-
-export default async function HomePage() {
-  const playlists = await fetchPlaylists();
-
-  if (playlists.length === 0) {
+  if (!hasAny) {
     return (
       <div className="mx-auto max-w-6xl px-4 pb-24 pt-10">
-        <section className="overflow-hidden rounded-3xl border border-zinc-200/60 bg-gradient-to-br from-violet-600 via-fuchsia-600 to-amber-500 p-8 text-white shadow-lg sm:p-12">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/80">
+        <section className="overflow-hidden rounded-2xl border border-violet-200/40 bg-gradient-to-br from-violet-600 via-fuchsia-600 to-amber-500 px-6 py-7 text-white shadow-md sm:px-8 sm:py-8">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/85">
             PAN
           </p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
             플레이리스트를 한곳에
           </h1>
-          <p className="mt-4 max-w-lg text-sm leading-relaxed text-white/90 sm:text-base">
-            Spotify · YouTube 플레이리스트를 공유하는 커뮤니티. 첫 공유로 피드를
+          <p className="mt-2 max-w-lg text-xs leading-relaxed text-white/90 sm:text-sm">
+            Spotify · YouTube 플레이리스트를 공유하는 커뮤니티. 첫 글로 피드를
             채워보세요.
           </p>
         </section>
@@ -56,19 +45,42 @@ export default async function HomePage() {
             채워집니다.
           </p>
           <Link
-            href="/playlists/new"
-            className="mt-8 inline-flex items-center justify-center rounded-2xl bg-zinc-900 px-6 py-3 text-sm font-semibold text-white no-underline transition hover:bg-zinc-800"
+            href="/write"
+            className="mt-8 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-6 py-3 text-sm font-semibold text-white no-underline shadow-md shadow-violet-500/25 transition hover:opacity-95"
           >
-            플레이리스트 공유하기
+            글쓰기
           </Link>
         </div>
       </div>
     );
   }
 
+  const page = parseListPage(searchParams.page);
+  const tag =
+    typeof searchParams.tag === "string" && searchParams.tag.trim()
+      ? searchParams.tag.trim()
+      : null;
+
+  const { rows, total, totalPages, safePage } = await fetchPlaylistsListPage(
+    supabase,
+    { recommendedOnly: false, tag, page }
+  );
+
+  if (page !== safePage) {
+    redirect(playlistListPath("/", safePage, tag));
+  }
+
+  const allTags = await fetchTagOptions(supabase, false);
+
   return (
     <PlaylistExplore
-      playlists={playlists}
+      playlists={rows}
+      allTags={allTags}
+      totalCount={total}
+      currentPage={safePage}
+      totalPages={totalPages}
+      currentTag={tag}
+      basePath="/"
       pageTitle="Discover playlists"
       pageSubtitle="Spotify · YouTube 플레이리스트를 공유하는 커뮤니티"
     />

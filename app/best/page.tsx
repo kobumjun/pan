@@ -1,38 +1,38 @@
+import { redirect } from "next/navigation";
 import PlaylistExplore from "@/components/PlaylistExplore";
 import { getSupabaseServerAnon } from "@/lib/supabaseServer";
-import type { PlaylistRow } from "@/lib/types";
+import {
+  fetchPlaylistsListPage,
+  fetchTagOptions,
+  parseListPage,
+  playlistListPath
+} from "@/lib/playlistsList";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const SELECT_FIELDS =
-  "id, user_name, title, description, source_type, source_url, source_id, cover_image_url, author_name, track_count, tags, likes_count, comments_count, created_at";
-
-async function fetchRecommended(): Promise<PlaylistRow[]> {
+export default async function BestPage({
+  searchParams
+}: {
+  searchParams: { page?: string; tag?: string };
+}) {
   const supabase = getSupabaseServerAnon();
-  const { data, error } = await supabase
-    .from("playlists")
-    .select(SELECT_FIELDS)
-    .gte("likes_count", 15)
-    .order("created_at", { ascending: false })
-    .limit(100);
+  const page = parseListPage(searchParams.page);
+  const tag =
+    typeof searchParams.tag === "string" && searchParams.tag.trim()
+      ? searchParams.tag.trim()
+      : null;
 
-  if (error) {
-    console.error("Failed to load recommended playlists", error);
-    return [];
+  const { rows, total, totalPages, safePage } = await fetchPlaylistsListPage(
+    supabase,
+    { recommendedOnly: true, tag, page }
+  );
+
+  if (page !== safePage) {
+    redirect(playlistListPath("/best", safePage, tag));
   }
-  if (!data) return [];
-  return (data as unknown as PlaylistRow[]).map((row) => ({
-    ...row,
-    likes_count: row.likes_count ?? 0,
-    comments_count: row.comments_count ?? 0
-  }));
-}
 
-export default async function BestPage() {
-  const playlists = await fetchRecommended();
-
-  if (playlists.length === 0) {
+  if (total === 0 && !tag) {
     return (
       <div className="mx-auto max-w-6xl px-4 pb-20 pt-10">
         <div className="mb-8">
@@ -51,9 +51,17 @@ export default async function BestPage() {
     );
   }
 
+  const allTags = await fetchTagOptions(supabase, true);
+
   return (
     <PlaylistExplore
-      playlists={playlists}
+      playlists={rows}
+      allTags={allTags}
+      totalCount={total}
+      currentPage={safePage}
+      totalPages={totalPages}
+      currentTag={tag}
+      basePath="/best"
       pageTitle="추천"
       pageSubtitle="좋아요 15개 이상 받은 플레이리스트만 골랐어요."
       compactHero

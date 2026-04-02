@@ -8,6 +8,7 @@ export default function PlaylistSubmitForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
+  const [postPin, setPostPin] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: FormEvent) {
@@ -20,6 +21,10 @@ export default function PlaylistSubmitForm() {
       alert("플레이리스트 링크를 입력해주세요.");
       return;
     }
+    if (!/^\d{4,6}$/.test(postPin)) {
+      alert("글 비밀번호는 숫자 4~6자리로 설정해주세요.");
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/playlists", {
@@ -30,7 +35,8 @@ export default function PlaylistSubmitForm() {
           user_name: userName,
           title: title.trim() || undefined,
           description: description.trim() || undefined,
-          tags
+          tags,
+          post_pin: postPin
         })
       });
       const data = await res.json();
@@ -65,8 +71,7 @@ export default function PlaylistSubmitForm() {
           className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
         />
         <p className="mt-2 text-[12px] leading-relaxed text-zinc-500">
-          Spotify·YouTube는 제목·설명·썸네일·작성자·곡 수를 서버에서 자동으로
-          가져옵니다. YouTube는 Data API 키가 필요합니다.
+          Spotify·YouTube는 제목·설명·썸네일 등을 서버에서 자동으로 가져옵니다.
         </p>
       </div>
       <div>
@@ -80,6 +85,23 @@ export default function PlaylistSubmitForm() {
           onChange={(e) => setUserName(e.target.value)}
           className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
         />
+      </div>
+      <div className="rounded-xl border border-violet-200/80 bg-violet-50/40 p-4">
+        <label className="mb-1.5 block text-xs font-semibold text-violet-900">
+          글 비밀번호 (숫자 4~6자리)
+        </label>
+        <input
+          type="password"
+          inputMode="numeric"
+          maxLength={6}
+          value={postPin}
+          onChange={(e) => setPostPin(e.target.value.replace(/\D/g, ""))}
+          placeholder="수정·삭제 시 필요합니다"
+          className="w-full rounded-lg border border-violet-200 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-500/25"
+        />
+        <p className="mt-2 text-[11px] text-violet-800/80">
+          회원가입 없이 이 숫자만으로 글을 수정하거나 삭제할 수 있어요.
+        </p>
       </div>
       <div>
         <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zinc-500">
@@ -122,7 +144,7 @@ export default function PlaylistSubmitForm() {
         disabled={loading}
         className="w-full rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 py-3.5 text-sm font-semibold text-white shadow-md shadow-violet-500/25 transition hover:opacity-95 disabled:opacity-50"
       >
-        {loading ? "등록 중…" : "공유하기"}
+        {loading ? "등록 중…" : "등록하기"}
       </button>
     </form>
   );

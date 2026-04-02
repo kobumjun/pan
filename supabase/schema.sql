@@ -215,3 +215,6 @@ begin
 end;
 $$;
 
+-- 수정/삭제용 숫자 PIN (bcrypt 해시 저장 권장)
+alter table public.playlists add column if not exists password_hash text;
+

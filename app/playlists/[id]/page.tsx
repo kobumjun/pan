@@ -5,6 +5,7 @@ import type { PlaylistCommentRow, PlaylistRow } from "@/lib/types";
 import PlaylistLikeButton from "@/components/PlaylistLikeButton";
 import PlaylistCommentForm from "@/components/PlaylistCommentForm";
 import PlaylistCommentList from "@/components/PlaylistCommentList";
+import PlaylistDetailActions from "@/components/PlaylistDetailActions";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -107,25 +108,37 @@ export default async function PlaylistDetailPage({
               </span>
             ))}
           </div>
-          <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-sm text-zinc-500">
+          <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-xs text-zinc-500 sm:text-sm">
             <span>
-              공유 <span className="font-medium text-zinc-800">{p.user_name}</span>
+              <span className="font-medium text-zinc-700">{p.user_name}</span>
             </span>
-            {p.author_name ? <span>· {p.author_name}</span> : null}
-            {typeof p.track_count === "number" ? <span>· {p.track_count}곡</span> : null}
-            <span>· 댓글 {p.comments_count ?? 0}</span>
+            {p.author_name ? <span className="text-zinc-400">·</span> : null}
+            {p.author_name ? <span>{p.author_name}</span> : null}
+            {typeof p.track_count === "number" ? (
+              <>
+                <span className="text-zinc-400">·</span>
+                <span>{p.track_count}곡</span>
+              </>
+            ) : null}
+            <span className="text-zinc-400">·</span>
+            <span>댓글 {p.comments_count ?? 0}</span>
+            <span className="text-zinc-400">·</span>
+            <span>좋아요 {p.likes_count ?? 0}</span>
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <PlaylistLikeButton playlistId={p.id} initialLikes={p.likes_count} />
-            <a
-              href={p.source_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 no-underline hover:border-zinc-300"
-            >
-              원본에서 열기
-            </a>
+          <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="flex flex-wrap items-center gap-2">
+              <PlaylistLikeButton playlistId={p.id} initialLikes={p.likes_count} />
+              <a
+                href={p.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-800 no-underline hover:border-violet-200"
+              >
+                원본 열기
+              </a>
+            </div>
+            <PlaylistDetailActions playlistId={p.id} />
           </div>
         </div>
       </div>
