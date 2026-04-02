@@ -1,29 +1,26 @@
-export type Category = "cert";
+export type PlaylistSource = "spotify" | "youtube";
 
-export interface Post {
+export interface PlaylistRow {
   id: string;
-  category: Category;
+  user_name: string;
   title: string;
-  content: string;
+  description: string | null;
+  source_type: PlaylistSource;
+  source_url: string;
+  source_id: string | null;
+  cover_image_url: string | null;
+  author_name: string | null;
+  track_count: number | null;
+  tags: string[] | null;
   likes_count: number;
   comments_count: number;
   created_at: string;
-  updated_at: string | null;
-  images?: PostImage[];
 }
 
-export interface PostImage {
+export interface PlaylistCommentRow {
   id: string;
-  post_id: string;
-  image_url: string;
-  sort_order: number | null;
-}
-
-export interface Comment {
-  id: string;
-  post_id: string;
+  playlist_id: string;
+  user_name: string | null;
   content: string;
   created_at: string;
-  updated_at: string | null;
 }
-

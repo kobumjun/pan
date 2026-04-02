@@ -118,3 +118,100 @@ begin
 end;
 $$;
 
+-- Playlist sharing (run on existing projects: paste from here if tables already exist)
+create table if not exists public.playlists (
+  id uuid primary key default gen_random_uuid(),
+  user_name text not null,
+  title text not null,
+  description text,
+  source_type text not null check (source_type in ('spotify', 'youtube')),
+  source_url text not null,
+  source_id text,
+  cover_image_url text,
+  author_name text,
+  track_count integer,
+  tags text[] not null default '{}',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists playlists_created_at_idx on public.playlists (created_at desc);
+create index if not exists playlists_tags_idx on public.playlists using gin (tags);
+
+alter table public.playlists enable row level security;
+
+create policy "Public read playlists"
+  on public.playlists
+  for select
+  using (true);
+
+create policy "Service role write playlists"
+  on public.playlists
+  for all
+  using (auth.role() = 'service_role')
+  with check (auth.role() = 'service_role');
+
+-- Playlist engagement (기존 DB: 아래 alter / create 는 SQL 에디터에서 순서대로 실행)
+alter table public.playlists add column if not exists likes_count integer not null default 0;
+alter table public.playlists add column if not exists comments_count integer not null default 0;
+
+create table if not exists public.playlist_comments (
+  id uuid primary key default gen_random_uuid(),
+  playlist_id uuid not null references public.playlists(id) on delete cascade,
+  user_name text,
+  content text not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists playlist_comments_playlist_idx
+  on public.playlist_comments (playlist_id, created_at);
+
+create table if not exists public.playlist_likes (
+  id uuid primary key default gen_random_uuid(),
+  playlist_id uuid not null references public.playlists(id) on delete cascade,
+  client_key text not null,
+  created_at timestamptz not null default now(),
+  unique (playlist_id, client_key)
+);
+
+create index if not exists playlist_likes_playlist_idx on public.playlist_likes (playlist_id);
+
+alter table public.playlist_comments enable row level security;
+alter table public.playlist_likes enable row level security;
+
+create policy "Public read playlist_comments"
+  on public.playlist_comments for select using (true);
+
+create policy "Service role write playlist_comments"
+  on public.playlist_comments for all
+  using (auth.role() = 'service_role')
+  with check (auth.role() = 'service_role');
+
+create policy "Public read playlist_likes"
+  on public.playlist_likes for select using (true);
+
+create policy "Service role write playlist_likes"
+  on public.playlist_likes for all
+  using (auth.role() = 'service_role')
+  with check (auth.role() = 'service_role');
+
+create or replace function public.increment_playlist_likes(p_playlist_id uuid)
+returns void language plpgsql security definer as $$
+begin
+  update public.playlists set likes_count = likes_count + 1 where id = p_playlist_id;
+end;
+$$;
+
+create or replace function public.decrement_playlist_likes(p_playlist_id uuid)
+returns void language plpgsql security definer as $$
+begin
+  update public.playlists set likes_count = greatest(likes_count - 1, 0) where id = p_playlist_id;
+end;
+$$;
+
+create or replace function public.increment_playlist_comments(p_playlist_id uuid)
+returns void language plpgsql security definer as $$
+begin
+  update public.playlists set comments_count = comments_count + 1 where id = p_playlist_id;
+end;
+$$;
+

@@ -1,6 +1,6 @@
-# 익명 자랑 인증 커뮤니티 MVP
+# PAN — 플레이리스트 공유 커뮤니티
 
-Next.js 14 App Router + TypeScript + Tailwind + Supabase 기반의 익명 자랑 커뮤니티입니다.
+Spotify · YouTube 플레이리스트를 공유·발견하는 Next.js + Supabase 앱입니다.
 
 ## 설치
 
@@ -8,37 +8,24 @@ Next.js 14 App Router + TypeScript + Tailwind + Supabase 기반의 익명 자랑
 npm install
 ```
 
-## 환경 변수 설정
+## 환경 변수 (`.env.local`)
 
-`.env.local` 파일을 만들고 아래 값을 채웁니다.
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+- `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` — Spotify 플레이리스트 메타데이터 (Client Credentials)
+- `YOUTUBE_API_KEY` — YouTube Data API v3, `playlists.list` 용
 
-```bash
-cp .env.example .env.local
-```
+## Supabase
 
-- `NEXT_PUBLIC_SUPABASE_URL`: Supabase 프로젝트 URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase anon key
-- `SUPABASE_SERVICE_ROLE_KEY`: Supabase service role key (서버 전용, 클라이언트에 노출 금지)
+SQL 에디터에서 `supabase/schema.sql`을 실행합니다. 기존 프로젝트는 파일 하단 `playlists` 확장(좋아요·댓글 테이블, RPC)만 추가 실행해도 됩니다.
 
-## Supabase 설정
+## 페이지
 
-1. Supabase 프로젝트에서 SQL 에디터를 열고 `supabase/schema.sql` 내용을 실행합니다.
-2. Storage에서 `post-images` 버킷을 생성하고 public 읽기 권한을 켭니다.
+- `/` — 플레이리스트 카드 목록, 태그 필터
+- `/best` — 좋아요 15개 이상 추천
+- `/playlists/new` — 공유 폼
+- `/playlists/[id]` — 상세, 임베드, 좋아요 토글, 댓글
 
-## 개발 서버 실행
+## Spotify / YouTube
 
-```bash
-npm run dev
-```
-
-브라우저에서 `http://localhost:3000` 접속.
-
-## 기본 페이지
-
-- `/` : 인증 게시판 목록
-- `/best` : 추천글 (likes_count ≥ 15)
-- `/write` : 글 작성
-- `/post/[id]` : 글 상세
-- `/post/[id]/edit` : 글 수정/삭제
-- `/comment/[id]/edit` : 댓글 수정/삭제
-
+- Spotify: 공개 플레이리스트만 Client Credentials로 조회 가능한 경우가 많습니다.
+- YouTube: `playlist?list=` 형식 링크를 사용하세요. Music 도메인도 동일하게 list 파라미터를 파싱합니다.
