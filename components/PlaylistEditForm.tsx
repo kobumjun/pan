@@ -62,7 +62,7 @@ export default function PlaylistEditForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="mx-auto max-w-lg space-y-5 rounded-3xl border border-zinc-200/80 bg-white p-8 shadow-sm"
+      className="mx-auto max-w-lg space-y-5 rounded-xl border border-zinc-200/90 bg-pan-card p-6 shadow-sm sm:p-8"
     >
       <div>
         <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zinc-500">
@@ -73,7 +73,7 @@ export default function PlaylistEditForm({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           maxLength={200}
-          className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
+          className="w-full rounded-lg border border-zinc-200 px-4 py-3 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
         />
       </div>
       <div>
@@ -85,7 +85,7 @@ export default function PlaylistEditForm({
           onChange={(e) => setDescription(e.target.value)}
           rows={6}
           maxLength={5000}
-          className="w-full resize-y rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
+          className="w-full resize-y rounded-lg border border-zinc-200 px-4 py-3 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
         />
       </div>
       <div>
@@ -96,11 +96,11 @@ export default function PlaylistEditForm({
           type="text"
           value={tags}
           onChange={(e) => setTags(e.target.value)}
-          className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
+          className="w-full rounded-lg border border-zinc-200 px-4 py-3 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
         />
       </div>
-      <div className="rounded-xl border border-amber-200/80 bg-amber-50/50 p-4">
-        <label className="mb-1.5 block text-xs font-semibold text-amber-900">
+      <div className="rounded-lg border border-zinc-200/90 bg-zinc-50/50 p-4">
+        <label className="mb-1.5 block text-xs font-semibold text-zinc-700">
           글 비밀번호 (수정 확인)
         </label>
         <input
@@ -110,13 +110,13 @@ export default function PlaylistEditForm({
           value={postPin}
           onChange={(e) => setPostPin(e.target.value.replace(/\D/g, ""))}
           placeholder="4~6자리 숫자"
-          className="w-full rounded-lg border border-amber-200 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-400/30"
+          className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
         />
       </div>
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 py-3.5 text-sm font-semibold text-white shadow-md shadow-violet-500/25 disabled:opacity-50"
+        className="w-full rounded-lg bg-pan-accent py-3.5 text-sm font-semibold text-white transition hover:bg-pan-accent-hover disabled:opacity-50"
       >
         {loading ? "저장 중…" : "수정 저장"}
       </button>

@@ -56,7 +56,7 @@ export default function PlaylistSubmitForm() {
   return (
     <form
       onSubmit={onSubmit}
-      className="mx-auto max-w-lg space-y-5 rounded-3xl border border-zinc-200/80 bg-white p-8 shadow-sm"
+      className="mx-auto max-w-lg space-y-5 rounded-xl border border-zinc-200/90 bg-pan-card p-6 shadow-sm sm:p-8"
     >
       <div>
         <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zinc-500">
@@ -68,7 +68,7 @@ export default function PlaylistSubmitForm() {
           value={sourceUrl}
           onChange={(e) => setSourceUrl(e.target.value)}
           placeholder="Spotify 또는 YouTube (playlist?list=)"
-          className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
+          className="w-full rounded-lg border border-zinc-200 px-4 py-3 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
         />
         <p className="mt-2 text-[12px] leading-relaxed text-zinc-500">
           Spotify·YouTube는 제목·설명·썸네일 등을 서버에서 자동으로 가져옵니다.
@@ -83,11 +83,11 @@ export default function PlaylistSubmitForm() {
           required
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
-          className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
+          className="w-full rounded-lg border border-zinc-200 px-4 py-3 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
         />
       </div>
-      <div className="rounded-xl border border-violet-200/80 bg-violet-50/40 p-4">
-        <label className="mb-1.5 block text-xs font-semibold text-violet-900">
+      <div className="rounded-lg border border-zinc-200/90 bg-zinc-50/50 p-4">
+        <label className="mb-1.5 block text-xs font-semibold text-zinc-700">
           글 비밀번호 (숫자 4~6자리)
         </label>
         <input
@@ -97,9 +97,9 @@ export default function PlaylistSubmitForm() {
           value={postPin}
           onChange={(e) => setPostPin(e.target.value.replace(/\D/g, ""))}
           placeholder="수정·삭제 시 필요합니다"
-          className="w-full rounded-lg border border-violet-200 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-500/25"
+          className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
         />
-        <p className="mt-2 text-[11px] text-violet-800/80">
+        <p className="mt-2 text-[11px] leading-relaxed text-zinc-500">
           회원가입 없이 이 숫자만으로 글을 수정하거나 삭제할 수 있어요.
         </p>
       </div>
@@ -112,7 +112,7 @@ export default function PlaylistSubmitForm() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="비우면 플랫폼 메타데이터 사용"
-          className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
+          className="w-full rounded-lg border border-zinc-200 px-4 py-3 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
         />
       </div>
       <div>
@@ -124,7 +124,7 @@ export default function PlaylistSubmitForm() {
           onChange={(e) => setDescription(e.target.value)}
           rows={4}
           placeholder="비우면 플랫폼 설명 사용"
-          className="w-full resize-y rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
+          className="w-full resize-y rounded-lg border border-zinc-200 px-4 py-3 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
         />
       </div>
       <div>
@@ -136,13 +136,13 @@ export default function PlaylistSubmitForm() {
           value={tags}
           onChange={(e) => setTags(e.target.value)}
           placeholder="쉼표로 구분 · 예: 힙합, 운동, 밤"
-          className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
+          className="w-full rounded-lg border border-zinc-200 px-4 py-3 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
         />
       </div>
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 py-3.5 text-sm font-semibold text-white shadow-md shadow-violet-500/25 transition hover:opacity-95 disabled:opacity-50"
+        className="w-full rounded-lg bg-pan-accent py-3.5 text-sm font-semibold text-white transition hover:bg-pan-accent-hover disabled:opacity-50"
       >
         {loading ? "등록 중…" : "등록하기"}
       </button>

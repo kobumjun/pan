@@ -28,14 +28,14 @@ export default function PlaylistDetailActions({ playlistId }: { playlistId: stri
       <div className="flex flex-wrap gap-2">
         <Link
           href={`/playlists/${playlistId}/edit`}
-          className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 no-underline hover:border-violet-300 hover:text-violet-800 sm:text-sm"
+          className="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-3.5 text-sm font-medium text-zinc-700 no-underline transition hover:border-zinc-300 hover:bg-zinc-50"
         >
           수정
         </Link>
         <button
           type="button"
           onClick={() => setDeleteOpen(true)}
-          className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100 sm:text-sm"
+          className="inline-flex h-10 items-center justify-center rounded-lg border border-red-200/90 bg-red-50/80 px-3.5 text-sm font-medium text-red-800 transition hover:bg-red-50"
         >
           삭제
         </button>

@@ -41,15 +41,20 @@ export default function PlaylistCommentForm({ playlistId }: { playlistId: string
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3 rounded-2xl border border-zinc-200/80 bg-white p-4">
-      <p className="text-sm font-medium text-zinc-800">댓글</p>
+    <form
+      onSubmit={onSubmit}
+      className="space-y-3 rounded-lg border border-zinc-200/90 bg-zinc-50/40 p-4 sm:p-5"
+    >
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+        새 댓글
+      </p>
       <input
         type="text"
         value={userName}
         onChange={(e) => setUserName(e.target.value)}
         placeholder="닉네임 (선택)"
         maxLength={40}
-        className="w-full rounded-xl border border-zinc-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500/30"
+        className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
       />
       <textarea
         value={content}
@@ -57,12 +62,12 @@ export default function PlaylistCommentForm({ playlistId }: { playlistId: string
         rows={3}
         maxLength={2000}
         placeholder="이 플레이리스트에 대한 생각을 남겨보세요."
-        className="w-full resize-y rounded-xl border border-zinc-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-500/30"
+        className="w-full resize-y rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
       />
       <button
         type="submit"
         disabled={loading}
-        className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50"
+        className="rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:opacity-50"
       >
         {loading ? "등록 중…" : "댓글 남기기"}
       </button>

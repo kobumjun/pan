@@ -78,16 +78,16 @@ export default function PlaylistLikeButton({
       type="button"
       onClick={toggle}
       disabled={loading}
-      className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition ${
+      className={`inline-flex h-10 items-center gap-2 rounded-lg border px-4 text-sm font-medium transition ${
         liked
-          ? "border-rose-300 bg-rose-50 text-rose-700"
-          : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300"
+          ? "border-pan-accent/40 bg-pan-accent-soft text-pan-accent"
+          : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50"
       }`}
     >
       <span aria-hidden>{liked ? "♥" : "♡"}</span>
       <span>좋아요 {count}</span>
       {count >= 15 ? (
-        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">
+        <span className="rounded border border-zinc-200/80 bg-zinc-100 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-600">
           추천
         </span>
       ) : null}

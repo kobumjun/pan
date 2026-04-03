@@ -35,16 +35,16 @@ export default function PlaylistPagination({
   const linkClass = (active: boolean) =>
     `inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border px-2.5 text-sm font-medium no-underline transition sm:min-h-10 sm:min-w-10 ${
       active
-        ? "border-violet-500 bg-violet-600 text-white shadow-sm"
-        : "border-zinc-200 bg-white text-zinc-700 hover:border-violet-300 hover:bg-violet-50/80"
+        ? "border-zinc-900 bg-zinc-900 text-white"
+        : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50"
     }`;
 
   const navClass =
-    "inline-flex min-h-9 items-center justify-center rounded-md border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-700 no-underline hover:border-violet-300 hover:bg-violet-50/80 sm:min-h-10";
+    "inline-flex min-h-9 items-center justify-center rounded-md border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-600 no-underline hover:border-zinc-300 hover:bg-zinc-50 sm:min-h-10";
 
   return (
     <nav
-      className="mt-6 flex flex-wrap items-center justify-center gap-1.5 border-t border-zinc-200/80 pt-5 sm:gap-2"
+      className="mt-2 flex flex-wrap items-center justify-center gap-1.5 border-t border-zinc-100 bg-zinc-50/40 px-3 py-5 sm:gap-2 sm:px-4"
       aria-label="페이지"
     >
       {prev ? (

@@ -40,14 +40,14 @@ export default async function PlaylistEditPage({
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-20 pt-8">
+    <div className="mx-auto max-w-4xl px-3 pb-20 pt-6 sm:px-4 sm:pt-8">
       <Link
         href={`/playlists/${p.id}`}
-        className="text-sm text-violet-700 no-underline hover:underline"
+        className="text-sm font-medium text-zinc-500 no-underline hover:text-zinc-800"
       >
         ← 상세로
       </Link>
-      <h1 className="mt-4 text-2xl font-semibold text-zinc-900">글 수정</h1>
+      <h1 className="mt-4 text-2xl font-bold tracking-tight text-zinc-900">글 수정</h1>
       <p className="mt-1 text-sm text-zinc-500">
         제목·설명·태그만 바꿀 수 있어요. 링크는 그대로 유지됩니다.
       </p>

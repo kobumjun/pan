@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <Header />
-        <main className="min-h-[calc(100vh-4rem)] bg-[#fafafa]">{children}</main>
+        <main className="min-h-[calc(100vh-4rem)] bg-pan-page">{children}</main>
       </body>
     </html>
   );

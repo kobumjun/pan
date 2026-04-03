@@ -11,7 +11,14 @@ const config: Config = {
         boardBg: "#f5f5f5",
         boardBorder: "#d4d4d4",
         boardHeader: "#e4e4e4",
-        boardText: "#111827"
+        boardText: "#111827",
+        pan: {
+          page: "#f7f7f8",
+          card: "#ffffff",
+          accent: "#4a3f6b",
+          "accent-hover": "#3d3458",
+          "accent-soft": "#edeaf3"
+        }
       },
       fontFamily: {
         sans: [

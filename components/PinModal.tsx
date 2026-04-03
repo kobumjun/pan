@@ -42,8 +42,8 @@ export default function PinModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4 backdrop-blur-[2px]">
-      <div className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-5 shadow-xl">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 p-4 backdrop-blur-[2px]">
+      <div className="w-full max-w-sm rounded-xl border border-zinc-200/90 bg-pan-card p-5 shadow-lg">
         <h3 className="text-sm font-semibold text-zinc-900">{title}</h3>
         <form onSubmit={handleSubmit} className="mt-4 space-y-3">
           <input
@@ -54,7 +54,7 @@ export default function PinModal({
             value={pin}
             onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
             placeholder="4~6자리 숫자"
-            className="w-full rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
+            className="w-full rounded-lg border border-zinc-200 px-3 py-2.5 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
           />
           <div className="flex justify-end gap-2 pt-1">
             <button
@@ -63,14 +63,14 @@ export default function PinModal({
                 setPin("");
                 onClose();
               }}
-              className="rounded-lg px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-100"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+              className="rounded-lg bg-pan-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-pan-accent-hover disabled:opacity-50"
             >
               {loading ? "…" : confirmLabel}
             </button>
