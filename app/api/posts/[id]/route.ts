@@ -1,39 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseServerService } from "@/lib/supabaseServer";
 import { comparePostPin, validatePostPin } from "@/lib/pin";
+import { normalizeTags } from "@/lib/postFormUtils";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function normalizeTags(input: unknown): string[] {
-  if (Array.isArray(input)) {
-    return input
-      .map((t) => String(t).trim())
-      .filter(Boolean)
-      .slice(0, 20);
-  }
-  if (typeof input === "string") {
-    return input
-      .split(/[,#]/)
-      .map((t) => t.trim())
-      .filter(Boolean)
-      .slice(0, 20);
-  }
-  return [];
-}
+const MAX_TITLE = 200;
+const MAX_CONTENT = 50_000;
 
 async function verifyPin(
   supabase: ReturnType<typeof getSupabaseServerService>,
-  playlistId: string,
+  postId: string,
   post_pin: string
 ): Promise<{ ok: true } | { ok: false; status: number; message: string }> {
   if (!validatePostPin(post_pin)) {
     return { ok: false, status: 400, message: "숫자 비밀번호 4~6자리를 입력해주세요." };
   }
   const { data: row, error } = await supabase
-    .from("playlists")
+    .from("posts")
     .select("password_hash")
-    .eq("id", playlistId)
+    .eq("id", postId)
     .single();
 
   if (error || !row) {
@@ -63,13 +50,16 @@ export async function PATCH(
     const post_pin =
       typeof body.post_pin === "string" ? body.post_pin.trim() : "";
     const title =
-      typeof body.title === "string" ? body.title.trim().slice(0, 200) : "";
-    const description =
-      typeof body.description === "string" ? body.description.trim().slice(0, 5000) : "";
+      typeof body.title === "string" ? body.title.trim().slice(0, MAX_TITLE) : "";
+    const content =
+      typeof body.content === "string" ? body.content.trim().slice(0, MAX_CONTENT) : "";
     const tags = normalizeTags(body.tags);
 
     if (!title) {
       return NextResponse.json({ message: "제목을 입력해주세요." }, { status: 400 });
+    }
+    if (!content) {
+      return NextResponse.json({ message: "본문을 입력해주세요." }, { status: 400 });
     }
 
     const supabase = getSupabaseServerService();
@@ -79,25 +69,23 @@ export async function PATCH(
     }
 
     const { error } = await supabase
-      .from("playlists")
+      .from("posts")
       .update({
         title,
-        description: description || null,
-        tags
+        content,
+        tags,
+        updated_at: new Date().toISOString()
       })
       .eq("id", params.id);
 
     if (error) {
-      console.error("playlist patch", error);
-      return NextResponse.json(
-        { message: "수정에 실패했습니다." },
-        { status: 500 }
-      );
+      console.error("posts patch", error);
+      return NextResponse.json({ message: "수정에 실패했습니다." }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true });
   } catch (e) {
-    console.error("PATCH playlist", e);
+    console.error("PATCH post", e);
     return NextResponse.json(
       { message: "요청 처리 중 오류가 발생했습니다." },
       { status: 500 }
@@ -125,9 +113,9 @@ export async function DELETE(
       return NextResponse.json({ message: v.message }, { status: v.status });
     }
 
-    const { error } = await supabase.from("playlists").delete().eq("id", params.id);
+    const { error } = await supabase.from("posts").delete().eq("id", params.id);
     if (error) {
-      console.error("playlist delete", error);
+      console.error("posts delete", error);
       return NextResponse.json(
         { message: "삭제 처리 중 오류가 발생했습니다." },
         { status: 500 }
@@ -136,7 +124,7 @@ export async function DELETE(
 
     return NextResponse.json({ ok: true });
   } catch (e) {
-    console.error("DELETE playlist", e);
+    console.error("DELETE post", e);
     return NextResponse.json(
       { message: "요청 처리 중 오류가 발생했습니다." },
       { status: 500 }

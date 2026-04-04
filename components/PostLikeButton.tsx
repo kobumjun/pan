@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { RECOMMENDED_MIN_LIKES } from "@/lib/topics";
 
-const STORAGE_KEY = "playlist_like_client_v1";
-const LIKED_PREFIX = "playlist_liked_";
+const STORAGE_KEY = "post_like_client_v1";
+const LIKED_PREFIX = "post_liked_";
 
 function getClientKey(): string {
   if (typeof window === "undefined") return "";
@@ -18,22 +19,22 @@ function getClientKey(): string {
   return k;
 }
 
-function isStoredLiked(playlistId: string): boolean {
+function isStoredLiked(postId: string): boolean {
   if (typeof window === "undefined") return false;
-  return window.localStorage.getItem(LIKED_PREFIX + playlistId) === "1";
+  return window.localStorage.getItem(LIKED_PREFIX + postId) === "1";
 }
 
-function setStoredLiked(playlistId: string, liked: boolean) {
+function setStoredLiked(postId: string, liked: boolean) {
   if (typeof window === "undefined") return;
-  if (liked) window.localStorage.setItem(LIKED_PREFIX + playlistId, "1");
-  else window.localStorage.removeItem(LIKED_PREFIX + playlistId);
+  if (liked) window.localStorage.setItem(LIKED_PREFIX + postId, "1");
+  else window.localStorage.removeItem(LIKED_PREFIX + postId);
 }
 
-export default function PlaylistLikeButton({
-  playlistId,
+export default function PostLikeButton({
+  postId,
   initialLikes
 }: {
-  playlistId: string;
+  postId: string;
   initialLikes: number;
 }) {
   const [count, setCount] = useState(initialLikes);
@@ -41,8 +42,8 @@ export default function PlaylistLikeButton({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLiked(isStoredLiked(playlistId));
-  }, [playlistId]);
+    setLiked(isStoredLiked(postId));
+  }, [postId]);
 
   useEffect(() => {
     setCount(initialLikes);
@@ -54,9 +55,9 @@ export default function PlaylistLikeButton({
     if (!key) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/playlists/${playlistId}/like`, {
+      const res = await fetch(`/api/posts/${postId}/like`, {
         method: "POST",
-        headers: { "x-playlist-client-key": key }
+        headers: { "x-post-client-key": key }
       });
       const data = await res.json();
       if (!res.ok) {
@@ -65,7 +66,7 @@ export default function PlaylistLikeButton({
       }
       setLiked(!!data.liked);
       setCount(typeof data.likes_count === "number" ? data.likes_count : count);
-      setStoredLiked(playlistId, !!data.liked);
+      setStoredLiked(postId, !!data.liked);
     } catch {
       alert("네트워크 오류가 발생했습니다.");
     } finally {
@@ -78,16 +79,16 @@ export default function PlaylistLikeButton({
       type="button"
       onClick={toggle}
       disabled={loading}
-      className={`inline-flex h-10 items-center gap-2 rounded-lg border px-4 text-sm font-medium transition ${
+      className={`inline-flex h-8 items-center gap-1.5 border px-3 text-xs font-medium ${
         liked
-          ? "border-pan-accent/40 bg-pan-accent-soft text-pan-accent"
-          : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50"
+          ? "border-zinc-700 bg-zinc-100 text-zinc-900"
+          : "border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50"
       }`}
     >
       <span aria-hidden>{liked ? "♥" : "♡"}</span>
       <span>좋아요 {count}</span>
-      {count >= 15 ? (
-        <span className="rounded border border-zinc-200/80 bg-zinc-100 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-600">
+      {count >= RECOMMENDED_MIN_LIKES ? (
+        <span className="border border-zinc-200 bg-zinc-50 px-1 text-[10px] text-zinc-500">
           추천
         </span>
       ) : null}

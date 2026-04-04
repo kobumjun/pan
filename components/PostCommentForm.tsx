@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function PlaylistCommentForm({ playlistId }: { playlistId: string }) {
+export default function PostCommentForm({ postId }: { postId: string }) {
   const router = useRouter();
   const [userName, setUserName] = useState("");
   const [content, setContent] = useState("");
@@ -18,7 +18,7 @@ export default function PlaylistCommentForm({ playlistId }: { playlistId: string
     }
     setLoading(true);
     try {
-      const res = await fetch(`/api/playlists/${playlistId}/comments`, {
+      const res = await fetch(`/api/posts/${postId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -43,10 +43,10 @@ export default function PlaylistCommentForm({ playlistId }: { playlistId: string
   return (
     <form
       onSubmit={onSubmit}
-      className="space-y-3 rounded-lg border border-zinc-200/90 bg-zinc-50/40 p-4 sm:p-5"
+      className="space-y-2 border border-zinc-200 bg-zinc-50/50 p-3"
     >
-      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
-        새 댓글
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-400">
+        댓글 쓰기
       </p>
       <input
         type="text"
@@ -54,22 +54,22 @@ export default function PlaylistCommentForm({ playlistId }: { playlistId: string
         onChange={(e) => setUserName(e.target.value)}
         placeholder="닉네임 (선택)"
         maxLength={40}
-        className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
+        className="w-full border border-zinc-200 bg-white px-2 py-1.5 text-sm outline-none focus:border-zinc-400"
       />
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         rows={3}
         maxLength={2000}
-        placeholder="이 플레이리스트에 대한 생각을 남겨보세요."
-        className="w-full resize-y rounded-lg border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/5"
+        placeholder="내용"
+        className="w-full resize-y border border-zinc-200 bg-white px-2 py-1.5 text-sm outline-none focus:border-zinc-400"
       />
       <button
         type="submit"
         disabled={loading}
-        className="rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:opacity-50"
+        className="border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-zinc-800 disabled:opacity-50"
       >
-        {loading ? "등록 중…" : "댓글 남기기"}
+        {loading ? "등록 중…" : "등록"}
       </button>
     </form>
   );

@@ -1,10 +1,42 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { PlaylistRow } from "@/lib/types";
+import type { PostListRow } from "@/lib/types";
+import { RECOMMENDED_MIN_LIKES } from "@/lib/topics";
 
-export const PLAYLISTS_PAGE_SIZE = 25;
+export const POSTS_PAGE_SIZE = 35;
 
-export const PLAYLIST_LIST_SELECT =
-  "id, user_name, title, description, source_type, source_url, source_id, cover_image_url, author_name, track_count, tags, likes_count, comments_count, created_at";
+export const POST_LIST_SELECT = `
+  id,
+  title,
+  author_name,
+  tags,
+  likes_count,
+  comments_count,
+  created_at,
+  updated_at,
+  post_images ( image_url, sort_order )
+`;
+
+function mapListRow(raw: Record<string, unknown>): PostListRow {
+  const imgs = raw.post_images as { image_url: string; sort_order: number | null }[] | null;
+  const sorted = Array.isArray(imgs)
+    ? [...imgs].sort(
+        (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)
+      )
+    : [];
+  const first = sorted[0];
+  return {
+    id: raw.id as string,
+    title: raw.title as string,
+    author_name: (raw.author_name as string) || "익명",
+    tags: (raw.tags as string[] | null) ?? [],
+    likes_count: (raw.likes_count as number) ?? 0,
+    comments_count: (raw.comments_count as number) ?? 0,
+    created_at: raw.created_at as string,
+    updated_at: (raw.updated_at as string | null) ?? null,
+    thumb_url: first?.image_url ?? null,
+    has_images: sorted.length > 0
+  };
+}
 
 export function parseListPage(raw: string | undefined): number {
   const n = parseInt(raw ?? "1", 10);
@@ -12,7 +44,7 @@ export function parseListPage(raw: string | undefined): number {
   return n;
 }
 
-export function playlistListPath(
+export function postListPath(
   basePath: string,
   page: number,
   tag: string | null
@@ -30,25 +62,25 @@ type ListOptions = {
   page: number;
 };
 
-export async function fetchPlaylistsListPage(
+export async function fetchPostsListPage(
   supabase: SupabaseClient,
   opts: ListOptions
 ): Promise<{
-  rows: PlaylistRow[];
+  rows: PostListRow[];
   total: number;
   totalPages: number;
   safePage: number;
 }> {
   const { recommendedOnly, tag, page } = opts;
-  const size = PLAYLISTS_PAGE_SIZE;
+  const size = POSTS_PAGE_SIZE;
 
-  let countQ = supabase.from("playlists").select("*", { count: "exact", head: true });
-  if (recommendedOnly) countQ = countQ.gte("likes_count", 15);
+  let countQ = supabase.from("posts").select("*", { count: "exact", head: true });
+  if (recommendedOnly) countQ = countQ.gte("likes_count", RECOMMENDED_MIN_LIKES);
   if (tag) countQ = countQ.contains("tags", [tag]);
 
   const { count: rawCount, error: countErr } = await countQ;
   if (countErr) {
-    console.error("playlists count", countErr);
+    console.error("posts count", countErr);
     return { rows: [], total: 0, totalPages: 1, safePage: 1 };
   }
 
@@ -59,40 +91,35 @@ export async function fetchPlaylistsListPage(
   const to = from + size - 1;
 
   let dataQ = supabase
-    .from("playlists")
-    .select(PLAYLIST_LIST_SELECT)
+    .from("posts")
+    .select(POST_LIST_SELECT)
     .order("created_at", { ascending: false })
     .range(from, to);
-  if (recommendedOnly) dataQ = dataQ.gte("likes_count", 15);
+  if (recommendedOnly) dataQ = dataQ.gte("likes_count", RECOMMENDED_MIN_LIKES);
   if (tag) dataQ = dataQ.contains("tags", [tag]);
 
   const { data, error } = await dataQ;
   if (error) {
-    console.error("playlists list", error);
+    console.error("posts list", error);
     return { rows: [], total, totalPages, safePage };
   }
 
-  const rows = ((data ?? []) as unknown as PlaylistRow[]).map((row) => ({
-    ...row,
-    likes_count: row.likes_count ?? 0,
-    comments_count: row.comments_count ?? 0
-  }));
+  const rows = ((data ?? []) as unknown as Record<string, unknown>[]).map(mapListRow);
 
   return { rows, total, totalPages, safePage };
 }
 
-/** 태그 칩용: 최근 글에서 태그 수집 (대량 DB에서도 부담 적게) */
 export async function fetchTagOptions(
   supabase: SupabaseClient,
   recommendedOnly: boolean,
-  sampleLimit = 1000
+  sampleLimit = 800
 ): Promise<string[]> {
   let q = supabase
-    .from("playlists")
+    .from("posts")
     .select("tags")
     .order("created_at", { ascending: false })
     .limit(sampleLimit);
-  if (recommendedOnly) q = q.gte("likes_count", 15);
+  if (recommendedOnly) q = q.gte("likes_count", RECOMMENDED_MIN_LIKES);
 
   const { data, error } = await q;
   if (error || !data) return [];
@@ -104,9 +131,9 @@ export async function fetchTagOptions(
   return Array.from(set).sort();
 }
 
-export async function fetchAnyPlaylistExists(supabase: SupabaseClient): Promise<boolean> {
+export async function fetchAnyPostExists(supabase: SupabaseClient): Promise<boolean> {
   const { count, error } = await supabase
-    .from("playlists")
+    .from("posts")
     .select("*", { count: "exact", head: true });
   if (error) return false;
   return (count ?? 0) > 0;

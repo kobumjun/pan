@@ -20,10 +20,10 @@ export default function Header() {
       <Link
         href={href}
         className={clsx(
-          "rounded-md px-3 py-1.5 text-xs font-medium no-underline transition sm:px-3.5 sm:py-2 sm:text-[13px]",
+          "px-2.5 py-1 text-xs font-medium no-underline sm:text-[13px]",
           active
-            ? "bg-white text-zinc-900 shadow-sm ring-1 ring-zinc-200/80"
-            : "text-zinc-500 hover:text-zinc-800"
+            ? "bg-zinc-900 text-white"
+            : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
         )}
       >
         {label}
@@ -32,23 +32,23 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-pan-card/95 backdrop-blur-md">
-      <div className="mx-auto flex max-w-4xl flex-col gap-3.5 px-3 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-4 sm:py-4">
+    <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/95 backdrop-blur-sm">
+      <div className="mx-auto flex max-w-5xl flex-col gap-2 px-2 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-3 sm:py-2.5">
         <div className="min-w-0">
           <Link
             href="/"
-            className="text-[17px] font-bold tracking-tight text-zinc-900 no-underline hover:text-pan-accent sm:text-lg"
+            className="text-base font-bold tracking-tight text-zinc-900 no-underline sm:text-[17px]"
           >
             PAN
           </Link>
-          <p className="mt-1 max-w-md text-[11px] leading-snug text-zinc-500 sm:text-xs">
-            Spotify · YouTube 플레이리스트를 공유하는 커뮤니티
+          <p className="mt-0.5 max-w-xl text-[10px] leading-snug text-zinc-500 sm:text-[11px]">
+            실행·자기계발 정보 공유 · 기록과 팁을 빠르게
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-2.5 sm:justify-end">
+        <div className="flex flex-wrap items-center justify-between gap-2 sm:justify-end">
           <nav
-            className="inline-flex rounded-lg border border-zinc-200/90 bg-zinc-100/90 p-0.5"
+            className="inline-flex border border-zinc-200"
             aria-label="주요 메뉴"
           >
             {tab("/", "홈")}
@@ -59,14 +59,14 @@ export default function Header() {
             {showProminentWrite ? (
               <Link
                 href="/write"
-                className="inline-flex items-center justify-center rounded-lg bg-pan-accent px-3.5 py-2 text-xs font-semibold text-white no-underline transition hover:bg-pan-accent-hover sm:px-4 sm:text-sm"
+                className="inline-flex items-center border border-zinc-900 bg-zinc-900 px-2.5 py-1 text-xs font-semibold text-white no-underline hover:bg-zinc-800 sm:px-3 sm:text-sm"
               >
                 글쓰기
               </Link>
             ) : showSubtleWrite ? (
               <Link
                 href="/write"
-                className="text-xs font-semibold text-pan-accent no-underline hover:text-pan-accent-hover sm:text-sm"
+                className="text-xs font-semibold text-zinc-700 no-underline hover:text-zinc-900 sm:text-sm"
               >
                 글쓰기
               </Link>

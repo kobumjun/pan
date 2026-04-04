@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import PinModal from "./PinModal";
 
-export default function PlaylistDetailActions({ playlistId }: { playlistId: string }) {
+export default function PostDetailActions({ postId }: { postId: string }) {
   const router = useRouter();
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   async function handleDelete(pin: string) {
-    const res = await fetch(`/api/playlists/${playlistId}`, {
+    const res = await fetch(`/api/posts/${postId}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ post_pin: pin })
@@ -25,17 +25,17 @@ export default function PlaylistDetailActions({ playlistId }: { playlistId: stri
 
   return (
     <>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         <Link
-          href={`/playlists/${playlistId}/edit`}
-          className="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-3.5 text-sm font-medium text-zinc-700 no-underline transition hover:border-zinc-300 hover:bg-zinc-50"
+          href={`/posts/${postId}/edit`}
+          className="inline-flex h-8 items-center border border-zinc-200 bg-white px-2.5 text-xs font-medium text-zinc-700 no-underline hover:bg-zinc-50"
         >
           수정
         </Link>
         <button
           type="button"
           onClick={() => setDeleteOpen(true)}
-          className="inline-flex h-10 items-center justify-center rounded-lg border border-red-200/90 bg-red-50/80 px-3.5 text-sm font-medium text-red-800 transition hover:bg-red-50"
+          className="inline-flex h-8 items-center border border-red-200 bg-red-50 px-2.5 text-xs font-medium text-red-800 hover:bg-red-100"
         >
           삭제
         </button>

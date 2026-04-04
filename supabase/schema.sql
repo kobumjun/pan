@@ -1,3 +1,7 @@
+-- PAN 앱은 `posts` / `post_images` / `comments` / `likes` 를 사용합니다.
+-- 피벗 후 DB 정렬: `supabase/migration_pivot_to_posts.sql` 참고.
+-- 하단 `playlists` 블록은 레거시이며 앱에서 사용하지 않습니다.
+
 create table public.posts (
   id uuid primary key default gen_random_uuid(),
   category text not null default 'cert',

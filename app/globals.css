@@ -8,19 +8,19 @@ body {
 }
 
 body {
-  @apply bg-pan-page text-zinc-900 antialiased;
+  @apply bg-[#f4f4f5] text-zinc-900 antialiased;
   font-family: theme("fontFamily.sans");
 }
 
 a {
-  @apply text-zinc-700 decoration-zinc-300/80 underline-offset-2 hover:text-pan-accent hover:decoration-pan-accent/40;
+  @apply text-zinc-700 underline-offset-2 decoration-zinc-300/80 hover:text-zinc-900 hover:decoration-zinc-500/50;
 }
 
 input[type="text"],
 input[type="password"],
 input[type="url"],
 textarea {
-  @apply border border-zinc-200 px-2 py-1 text-sm w-full rounded-lg;
+  @apply w-full border border-zinc-200 px-2 py-1.5 text-sm;
 }
 
 button {

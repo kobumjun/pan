@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import PlaylistExplore from "@/components/PlaylistExplore";
+import PostExplore from "@/components/PostExplore";
 import { getSupabaseServerAnon } from "@/lib/supabaseServer";
 import {
-  fetchAnyPlaylistExists,
-  fetchPlaylistsListPage,
+  fetchAnyPostExists,
+  fetchPostsListPage,
   fetchTagOptions,
   parseListPage,
-  playlistListPath
-} from "@/lib/playlistsList";
+  postListPath
+} from "@/lib/postsList";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -19,34 +19,31 @@ export default async function HomePage({
   searchParams: { page?: string; tag?: string };
 }) {
   const supabase = getSupabaseServerAnon();
-  const hasAny = await fetchAnyPlaylistExists(supabase);
+  const hasAny = await fetchAnyPostExists(supabase);
 
   if (!hasAny) {
     return (
-      <div className="mx-auto max-w-4xl px-3 pb-24 pt-6 sm:px-4 sm:pt-8">
-        <section className="rounded-xl border border-zinc-200/90 bg-pan-card px-5 py-7 shadow-sm sm:px-7 sm:py-8">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-400">
+      <div className="mx-auto max-w-5xl px-2 pb-16 pt-4 sm:px-3">
+        <header className="border-b border-zinc-200 pb-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
             PAN
           </p>
-          <h1 className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl">
-            플레이리스트를 한곳에
+          <h1 className="mt-1 text-lg font-bold text-zinc-900 sm:text-xl">
+            실행하는 사람들의 정보 저장소
           </h1>
-          <p className="mt-3 max-w-lg text-sm leading-relaxed text-zinc-500">
-            Spotify · YouTube 플레이리스트를 공유하는 커뮤니티. 첫 글로 피드를
-            채워보세요.
+          <p className="mt-1 text-xs text-zinc-500 sm:text-sm">
+            자기계발 · 사업 · 돈 · 운동 · AI · 루틴 · 팁과 기록을 빠르게 남기고
+            참고하세요.
           </p>
-        </section>
-        <div className="mt-8 rounded-xl border border-zinc-200/90 bg-pan-card px-6 py-14 text-center shadow-sm sm:py-16">
-          <p className="text-base font-semibold text-zinc-800 sm:text-lg">
-            아직 올라온 플레이리스트가 없습니다
-          </p>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-zinc-500">
-            좋아하는 플리 링크 하나만 있으면 충분해요. 메타데이터는 자동으로
-            채워집니다.
+        </header>
+        <div className="mt-8 border border-dashed border-zinc-300 bg-white px-4 py-14 text-center">
+          <p className="text-sm font-semibold text-zinc-800">아직 글이 없습니다</p>
+          <p className="mx-auto mt-1 max-w-md text-xs text-zinc-500">
+            첫 글을 올려 커뮤니티를 시작해 보세요.
           </p>
           <Link
             href="/write"
-            className="mt-8 inline-flex items-center justify-center rounded-lg bg-pan-accent px-6 py-3 text-sm font-semibold text-white no-underline transition hover:bg-pan-accent-hover"
+            className="mt-6 inline-block border border-zinc-900 bg-zinc-900 px-4 py-2 text-xs font-semibold text-white no-underline hover:bg-zinc-800"
           >
             글쓰기
           </Link>
@@ -61,28 +58,29 @@ export default async function HomePage({
       ? searchParams.tag.trim()
       : null;
 
-  const { rows, total, totalPages, safePage } = await fetchPlaylistsListPage(
-    supabase,
-    { recommendedOnly: false, tag, page }
-  );
+  const { rows, total, totalPages, safePage } = await fetchPostsListPage(supabase, {
+    recommendedOnly: false,
+    tag,
+    page
+  });
 
   if (page !== safePage) {
-    redirect(playlistListPath("/", safePage, tag));
+    redirect(postListPath("/", safePage, tag));
   }
 
   const allTags = await fetchTagOptions(supabase, false);
 
   return (
-    <PlaylistExplore
-      playlists={rows}
+    <PostExplore
+      posts={rows}
       allTags={allTags}
       totalCount={total}
       currentPage={safePage}
       totalPages={totalPages}
       currentTag={tag}
       basePath="/"
-      pageTitle="Discover playlists"
-      pageSubtitle="Spotify · YouTube 플레이리스트를 공유하는 커뮤니티"
+      pageTitle="최신 글"
+      pageSubtitle="자기계발·실행 기록·생산성·사업·돈·운동·AI·책·루틴·마인드셋·작업환경 — 정보와 팁을 빠르게 올리고 스크랩하세요."
     />
   );
 }

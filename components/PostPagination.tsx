@@ -20,7 +20,7 @@ type Props = {
   tag: string | null;
 };
 
-export default function PlaylistPagination({
+export default function PostPagination({
   basePath,
   currentPage,
   totalPages,
@@ -33,18 +33,18 @@ export default function PlaylistPagination({
   const items = getPaginationItems(currentPage, totalPages);
 
   const linkClass = (active: boolean) =>
-    `inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border px-2.5 text-sm font-medium no-underline transition sm:min-h-10 sm:min-w-10 ${
+    `inline-flex min-h-7 min-w-7 items-center justify-center border px-1.5 text-xs font-medium no-underline ${
       active
-        ? "border-zinc-900 bg-zinc-900 text-white"
-        : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50"
+        ? "border-zinc-800 bg-zinc-800 text-white"
+        : "border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50"
     }`;
 
   const navClass =
-    "inline-flex min-h-9 items-center justify-center rounded-md border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-600 no-underline hover:border-zinc-300 hover:bg-zinc-50 sm:min-h-10";
+    "inline-flex min-h-7 items-center border border-zinc-200 bg-white px-2 text-xs font-medium text-zinc-600 no-underline hover:bg-zinc-50";
 
   return (
     <nav
-      className="mt-2 flex flex-wrap items-center justify-center gap-1.5 border-t border-zinc-100 bg-zinc-50/40 px-3 py-5 sm:gap-2 sm:px-4"
+      className="flex flex-wrap items-center justify-center gap-1 border-t border-zinc-200 bg-zinc-50/50 px-2 py-2.5"
       aria-label="페이지"
     >
       {prev ? (
@@ -54,15 +54,10 @@ export default function PlaylistPagination({
       ) : (
         <span className={`${navClass} pointer-events-none opacity-40`}>이전</span>
       )}
-
-      <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-1.5">
+      <div className="flex flex-wrap items-center justify-center gap-0.5">
         {items.map((item, i) =>
           item === "ellipsis" ? (
-            <span
-              key={`e-${i}`}
-              className="px-1 text-sm text-zinc-400"
-              aria-hidden
-            >
+            <span key={`e-${i}`} className="px-0.5 text-xs text-zinc-400" aria-hidden>
               …
             </span>
           ) : (
@@ -76,7 +71,6 @@ export default function PlaylistPagination({
           )
         )}
       </div>
-
       {next ? (
         <Link href={buildHref(basePath, next, tag)} className={navClass}>
           다음
