@@ -17,7 +17,8 @@ npm install
 
 1. SQL 에디터에서 `supabase/schema.sql` 기준으로 `posts`, `post_images`, `comments`, `likes` 등이 준비되어 있어야 합니다.
 2. **피벗 마이그레이션**: `supabase/migration_pivot_to_posts.sql`을 실행해 `posts.author_name`, `posts.tags`, 댓글 `user_name`, `decrement_likes` RPC 등을 맞춥니다.
-3. Storage에서 버킷을 만들고(예: `post-images`), **공개 읽기**가 가능하도록 설정합니다. 서버(서비스 롤)가 업로드합니다.
+3. Storage에서 버킷을 만들고(예: `post-images`), **공개 읽기**가 가능하도록 설정합니다.
+4. 브라우저에서 직접 업로드하므로 `supabase/storage_policies_post_images.sql`의 **anon `incoming/` 업로드** 정책을 적용합니다. 버킷 ID가 다르면 SQL의 `post-images`를 수정하세요.
 
 ## 페이지
 
